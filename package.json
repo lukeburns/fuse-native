@@ -2,6 +2,16 @@
   "name": "@zkochan/fuse-native",
   "version": "0.1.2",
   "description": "Fully maintained fuse bindings for Node that aims to cover the entire FUSE api",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "bin.js",
+    "lib",
+    "binding.gyp",
+    "fuse-native.c",
+    "fuse-native.cpp",
+    "prebuilds"
+  ],
   "main": "index.js",
   "types": "index.d.ts",
   "bin": {

@@ -4,7 +4,14 @@ const path = require('path')
 const { exec } = require('child_process')
 
 const Nanoresource = require('nanoresource')
-const { beforeMount, beforeUnmount, configure, unconfigure, isConfigured } = require('fuse-shared-library')
+const _fuseLib = require('fuse-shared-library')
+const _darwinFuseKext = os.platform() === 'darwin' ? require('./lib/darwin-fuse-kext-config') : null
+
+const beforeMount = _fuseLib.beforeMount
+const beforeUnmount = _fuseLib.beforeUnmount
+const configure = _darwinFuseKext ? _darwinFuseKext.configure : _fuseLib.configure
+const unconfigure = _darwinFuseKext ? _darwinFuseKext.unconfigure : _fuseLib.unconfigure
+const isConfigured = _darwinFuseKext ? _darwinFuseKext.isConfigured : _fuseLib.isConfigured
 
 const binding = require('node-gyp-build')(__dirname)
 
@@ -15,6 +22,22 @@ const HAS_FOLDER_ICON = IS_OSX && fs.existsSync(OSX_FOLDER_ICON)
 const DEFAULT_TIMEOUT = 15 * 1000
 const TIMEOUT_ERRNO = IS_OSX ? -60 : -110
 const ENOTCONN = IS_OSX ? -57 : -107
+
+// Read/write operations document cb(bytes) as the primary form; (err, bytes) is also supported.
+// Native expects argv[1] = byte count or negative errno, plus a padding slot and ArrayBuffer.
+function readWriteFuseRes (a, b) {
+  if (b !== undefined) {
+    if (a) {
+      if (a instanceof Error) return -(a.errno != null ? a.errno : 5) || -5
+      if (typeof a === 'number' && a < 0) return a
+      return -5
+    }
+    return b | 0
+  }
+  if (a instanceof Error) return -(a.errno != null ? a.errno : 5) || -5
+  if (typeof a === 'number') return a
+  return 0
+}
 
 const OpcodesAndDefaults = new Map([
   ['init', {
@@ -489,14 +512,14 @@ class Fuse extends Nanoresource {
   }
 
   _op_read (signal, path, fd, buf, len, offsetLow, offsetHigh) {
-    this.ops.read(path, fd, buf, len, getDoubleArg(offsetLow, offsetHigh), (err, bytesRead) => {
-      return signal(err, bytesRead || 0, buf.buffer)
+    this.ops.read(path, fd, buf, len, getDoubleArg(offsetLow, offsetHigh), (a, b) => {
+      return signal(readWriteFuseRes(a, b), 0, buf.buffer)
     })
   }
 
   _op_write (signal, path, fd, buf, len, offsetLow, offsetHigh) {
-    this.ops.write(path, fd, buf, len, getDoubleArg(offsetLow, offsetHigh), (err, bytesWritten) => {
-      return signal(err, bytesWritten || 0, buf.buffer)
+    this.ops.write(path, fd, buf, len, getDoubleArg(offsetLow, offsetHigh), (a, b) => {
+      return signal(readWriteFuseRes(a, b), 0, buf.buffer)
     })
   }
 
@@ -819,7 +842,7 @@ function setDoubleInt (arr, idx, num) {
 }
 
 function getDoubleArg (a, b) {
-  return a + b * 4294967296
+  return (a >>> 0) + (b >>> 0) * 0x100000000
 }
 
 function toDateMS (st) {
