@@ -334,7 +334,7 @@ fuse-native configure # configures the kernel extension
 
 ### macOS: `Fuse.configure` and `isConfigured`
 
-On Darwin, `Fuse.isConfigured` / `Fuse.configure` use `lib/darwin-fuse-kext-config.js` (not the old script that often misreported “You need to be root” for unrelated failures).
+On Darwin, `Fuse.isConfigured` / `Fuse.configure` are implemented by `lib/darwin-fuse-kext-config.js`. It looks for macFUSE in standard locations and surfaces concrete errors. If you still see a vague “You need to be root” from other steps in your environment, treat it as a generic failure: check the paths and command output from this module and the section below.
 
 * **`isConfigured` is `true`** if `load_macfuse` exists under `/Library/Filesystems/macfuse.fs` (typical after the official **macFUSE .pkg**), or the legacy `configured` file there contains a `x.y` version.
 * **`configure` searches** for `macfuse.fs.tgz` under `/usr/local/lib`, `/opt/homebrew/lib`, `HOMEBREW_PREFIX`, Homebrew Cask `macfuse`, and env **`MACFUSE_TGZ`**, then unpacks to `/Library/Filesystems/macfuse.fs`. Errors include real command output.
