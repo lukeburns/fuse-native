@@ -79,8 +79,6 @@ declare module "@zkochan/fuse-native" {
             buffer: Buffer,
             length: number,
             position: number,
-            // This contradicts the code in index.js for _op_read, where the callback signature is (err, bytesRead)
-            // however, it appears that the calling code indeed interprets the "err" position as the value.
             cb: (bytesRead?: number) => void
         ) => void;
         write?: (
@@ -89,8 +87,6 @@ declare module "@zkochan/fuse-native" {
             buffer: Buffer,
             length: number,
             position: number,
-            // This contradicts the code in index.js for _op_write, where the callback signature is (err, bytesWritten)
-            // however, it appears that the calling code indeed interprets the "err" position as the value.
             cb: (bytesWritten?: number) => void
         ) => void;
         // For every open() call there will be exactly one release() call with the same flags and

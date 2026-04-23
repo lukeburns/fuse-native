@@ -23,8 +23,6 @@ const DEFAULT_TIMEOUT = 15 * 1000
 const TIMEOUT_ERRNO = IS_OSX ? -60 : -110
 const ENOTCONN = IS_OSX ? -57 : -107
 
-// Read/write operations document cb(bytes) as the primary form; (err, bytes) is also supported.
-// Native expects argv[1] = byte count or negative errno, plus a padding slot and ArrayBuffer.
 function readWriteFuseRes (a, b) {
   if (b !== undefined) {
     if (a) {
@@ -809,7 +807,6 @@ Fuse.EDQUOT = -122
 Fuse.ENOMEDIUM = -123
 Fuse.EMEDIUMTYPE = -124
 
-// Forward configuration functions through the exported class.
 Fuse.beforeMount = beforeMount
 Fuse.beforeUnmount = beforeUnmount
 Fuse.configure = configure
