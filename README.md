@@ -334,10 +334,9 @@ fuse-native configure # configures the kernel extension
 
 ### macOS: `Fuse.configure` and `isConfigured`
 
-On Darwin, `Fuse.isConfigured` / `Fuse.configure` use `lib/darwin-fuse-kext-config.js`.
-
-* **`isConfigured` is `true`** if `load_macfuse` exists under `/Library/Filesystems/macfuse.fs` (typical after the official **macFUSE .pkg**), or the legacy `configured` file there contains a `x.y` version.
-* **`configure` searches** for `macfuse.fs.tgz` under `/usr/local/lib`, `/opt/homebrew/lib`, `HOMEBREW_PREFIX`, Homebrew Cask `macfuse`, and env **`MACFUSE_TGZ`**, then unpacks to `/Library/Filesystems/macfuse.fs`. Errors include real command output.
+On Darwin, these methods are provided by `fuse-shared-library`'s Darwin package.
+The configure flow supports modern macFUSE locations (including Homebrew paths)
+and reports concrete command errors.
 
 ```sh
 cd /path/to/fuse-native

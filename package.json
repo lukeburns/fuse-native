@@ -6,7 +6,6 @@
     "index.js",
     "index.d.ts",
     "bin.js",
-    "lib",
     "binding.gyp",
     "fuse-native.c",
     "fuse-native.cpp",

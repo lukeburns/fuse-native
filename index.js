@@ -4,14 +4,7 @@ const path = require('path')
 const { exec } = require('child_process')
 
 const Nanoresource = require('nanoresource')
-const _fuseLib = require('fuse-shared-library')
-const _darwinFuseKext = os.platform() === 'darwin' ? require('./lib/darwin-fuse-kext-config') : null
-
-const beforeMount = _fuseLib.beforeMount
-const beforeUnmount = _fuseLib.beforeUnmount
-const configure = _darwinFuseKext ? _darwinFuseKext.configure : _fuseLib.configure
-const unconfigure = _darwinFuseKext ? _darwinFuseKext.unconfigure : _fuseLib.unconfigure
-const isConfigured = _darwinFuseKext ? _darwinFuseKext.isConfigured : _fuseLib.isConfigured
+const { beforeMount, beforeUnmount, configure, unconfigure, isConfigured } = require('fuse-shared-library')
 
 const binding = require('node-gyp-build')(__dirname)
 
