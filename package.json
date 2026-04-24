@@ -23,6 +23,9 @@
     "prebuild-ia32": "prebuildify --napi --strip --target=20.0.0 --arch=ia32",
     "configure": "NODE=$(which node) && sudo -E $NODE ./bin.js configure || true"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "gypfile": true,
   "dependencies": {
     "fuse-shared-library": "npm:@lukeburns/fuse-shared-library@^1.1.1",
